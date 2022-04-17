@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkuhooks=self.webpackChunkuhooks||[]).push([[229],{674:(e,t,s)=>{s.r(t),s.d(t,{default:()=>o});const o={css:'home,[is="home"]{ padding: 8px; }',exports:null,template:function(e,t,s,o){return e("<h1>This is Home Page</h1>",[])},name:"home"};(()=>{{const t=s(74).default;e.hot.accept(),e.hot.data&&t(s(674).default)}})()}}]);

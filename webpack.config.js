@@ -7,9 +7,9 @@ module.exports = {
     app: './src/index.js',
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'docs'),
     filename: '[name].bundle.js',
-    clean: true
+    clean: true,
   },
   devtool: 'source-map',
   optimization: {
@@ -42,27 +42,29 @@ module.exports = {
     hot: true,
     open: true,
     historyApiFallback: {
-      index: 'index.html'
-    }
+      index: 'index.html',
+    },
   },
   module: {
     rules: [
       {
         test: /\.riot$/,
         exclude: /node_modules/,
-        use: [{
-          loader: '@riotjs/webpack-loader',
-          options: {
-            hot: true
-          }
-        }]
-      }
-    ]
+        use: [
+          {
+            loader: '@riotjs/webpack-loader',
+            options: {
+              hot: true,
+            },
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'src/index.html'
+      template: 'src/index.html',
     }),
     new webpack.HotModuleReplacementPlugin(),
-  ]
+  ],
 }
