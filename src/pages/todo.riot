@@ -1,0 +1,140 @@
+<todo>
+  <div id="container">
+    <h1>ToDo App</h1>
+
+    <form onsubmit={ addTodo }>
+      <input
+        name="todo"
+        value=""
+        oninput={ onInput }
+        placeholder="please input task"
+      />
+      <button disabled={ !input }>
+        Add #{ todoList.length + 1 }
+      </button>
+        <button
+          class="danger"
+          disabled={ !hasDoneTodo }
+          onclick={ deleteDoneTodos }
+        >
+          delete done
+        </button>
+    </form>
+    <hr />
+    <h4>todo list</h4>
+    <ul>
+      <li each={ todo in todoList } key={ todo.id }>
+        <label class={ todo.done ? 'completed' : null }>
+          <input
+            type="checkbox"
+            checked={ todo.done }
+            onclick={ () => toggle(todo) }
+          >
+          { todo.title }
+        </label>
+        <button class="danger" onclick={ () => deleteTodo(todo) }>
+          delete
+        </button>
+      </li>
+    </ul>
+    <p if={ todoList.length === 0 }>No Todos</p>
+  </div>
+
+  <script>
+    import { useState } from 'uhooks'
+    import { withHook } from '../libs/withHook'
+
+    export default withHook((props, _state) => {
+      const [nextId, setNextId] = useState(props.nextId)
+      const [todoList, setTodoList] = useState(props.todoList)
+      const [hasDoneTodo, setHasDoneTodo] = useState(props.todoList)
+      const [input, setInput] = useState("")
+
+      const addTodo = (e) => {
+        e.preventDefault()
+        if (e.target.todo.value) {
+          const updatedTodoList = [
+            ...this.state.todoList,
+            {
+              id: this.state.nextId + 1,
+              title: e.target.todo.value,
+              done: false
+            }
+          ]
+          this.update({
+            hasDoneTodo: checkDoneTodo(updatedTodoList),
+            todoList: updatedTodoList,
+            nextId: this.state.nextId + 1,
+            isInput: false
+          })
+          e.target.todo.value = ""
+        }
+      }
+      const onInput = (e) => {
+        setInput(e.target.value)
+      }
+      const toggle = (todo) => {
+        todo.done = !todo.done
+        setHasDoneTodo(checkDoneTodo())
+      }
+      const checkDoneTodo = (updatedTodoList) => {
+        const todoList = updatedTodoList || todoList
+        return todoList.some(item => item.done === true)
+      }
+      const deleteTodo = (todo) => {
+        if (window.confirm('本当に削除してもよろしいですか? ')) {
+          const updatedTodoList
+            = this.state.todoList.filter(item => item.id !== todo.id)
+          setHasDoneTodo(checkDoneTodo(updatedTodoList))
+          setTodoList(updatedTodoList)
+        }
+      }
+      const deleteDoneTodos = () => {
+        if (window.confirm('本当に全てのtodoを削除してもよろしいですか? ')) {
+          this.update({
+            hasDoneTodo: false,
+            todoList: this.state.todoList.filter(item => item.done !== true)
+          })
+        }
+      }
+
+      return {
+        input,
+        onInput,
+        todoList,
+        hasDoneTodo,
+        deleteDoneTodos,
+        addTodo,
+        toggle,
+        checkDoneTodo,
+        deleteTodo,
+        deleteDoneTodos,
+      }
+    })
+  </script>
+
+  <style>
+  h4 {
+    border-top: 1px solid #aaa;
+    padding-top: 1rem;
+  }
+
+  ul {
+    padding: 0;
+  }
+
+  li {
+    list-style-type: none;
+    padding: 0.2em 0;
+  }
+
+  li:hover {
+    background-color: #eee;
+  }
+
+  li .completed {
+    text-decoration: line-through;
+    color: #ccc;
+  }
+  </style>
+</todo>
