@@ -10,12 +10,12 @@ export default [
     label: 'ToDo',
     componentName: 'todo',
     props: {
-      todoList: [
+      initialTodoList: [
         { id: 1, title: 'task1', done: false },
         { id: 2, title: 'task2', done: true },
         { id: 3, title: 'task3', done: false },
       ],
-      nextId: 4,
+      initialNextId: 4,
     },
   },
 ]

@@ -4,10 +4,10 @@
       name="todo"
       value=""
       placeholder="please input task"
-      onkeyup={ input }
+      onkeyup={ onInput }
     />
     <button disabled={ !isInput }>
-      Add #{ props.nextId }
+      Add #{ nextId }
     </button>
     <button
       class="danger"
@@ -19,28 +19,70 @@
   </form>
 
   <script>
-    export default {
-      addTodo(e) {
+    import { useState } from 'uhooks'
+    import { todoFormComponent } from '../../../libs/withHook'
+
+    export default todoFormComponent(props => {
+      const {
+        todoList,
+        setTodoList,
+        nextId,
+        setNextId,
+        setHasDoneTodo
+      } = props
+      const [isInput, setIsInput] = useState(false)
+
+      const addTodo = (e) => {
         e.preventDefault()
         if (e.target.todo.value) {
-          this.isInput = false
-          this.props.observable.trigger('add todo', {
-            title: e.target.todo.value,
-            done: false
-          })
+          const updatedTodoList = [
+            ...todoList,
+            {
+              id: nextId + 1,
+              title: e.target.todo.value,
+              done: false
+            }
+          ]
+
+          setHasDoneTodo(checkDoneTodo(updatedTodoList))
+          setTodoList(updatedTodoList)
+          setNextId(nextId + 1)
           e.target.todo.value = ""
         }
-      },
-      input(e) {
-        this.isInput = e.target.value
-        this.update()
-      },
-      deleteDoneTodos() {
-        if (window.confirm('本当に全ての todo を削除してもよろしいですか？')) {
-          this.props.observable.trigger('delete done todos')
+      }
+      const onInput = (e) => {
+        setIsInput(e.target.value)
+      }
+      const checkDoneTodo = (updatedTodoList) => {
+        const tmpList = updatedTodoList || todoList
+        return tmpList.some(item => item.done === true)
+      }
+      const deleteTodo = (todo) => {
+        if (window.confirm('本当に削除してもよろしいですか? ')) {
+          const updatedTodoList
+            = todoList.filter(item => item.id !== todo.id)
+          setHasDoneTodo(checkDoneTodo(updatedTodoList))
+          setTodoList(updatedTodoList)
         }
       }
-    }
+      const deleteDoneTodos = () => {
+        if (window.confirm('本当に全てのtodoを削除してもよろしいですか? ')) {
+          const updatedTodoList
+            = todoList.filter(item => item.done !== true)
+          setHasDoneTodo(false)
+          setTodoList(updatedTodoList)
+        }
+      }
+
+      return {
+        isInput,
+        setIsInput,
+        nextId,
+        onInput,
+        addTodo,
+        deleteDoneTodos,
+      }
+    })
   </script>
 
   <style>

@@ -2,26 +2,15 @@
   <div id="container">
     <h1>ToDo App</h1>
 
-    <form onsubmit={ addTodo }>
-      <input
-        name="todo"
-        value=""
-        oninput={ onInput }
-        placeholder="please input task"
-      />
-      <button disabled={ !input }>
-        Add #{ todoList.length + 1 }
-      </button>
-        <button
-          class="danger"
-          disabled={ !hasDoneTodo }
-          onclick={ deleteDoneTodos }
-        >
-          delete done
-        </button>
-    </form>
-    <todo-form />
-    <todo-list />
+    <todo-form
+      next-id={ nextId }
+      set-next-id={ setNextId }
+      todo-list={ todoList }
+      set-todo-list={ setTodoList }
+      has-done-todo={ hasDoneTodo }
+      set-has-done-todo={ setHasDoneTodo }
+      delete-done-todos={ deleteDoneTodos }
+    />
 
     <h4>todo list</h4>
     <ul>
@@ -44,37 +33,16 @@
 
   <script>
     import { useState } from 'uhooks'
-    import { withHook } from '../libs/withHook'
+    import { todoPage } from '../libs/withHook'
     import TodoForm from '../components/includes/todos/todo-form.riot'
     import TodoList from '../components/includes/todos/todo-list.riot'
 
-    export default withHook((props, _state) => {
-      const [nextId, setNextId] = useState(props.nextId)
-      const [todoList, setTodoList] = useState(props.todoList)
-      const [hasDoneTodo, setHasDoneTodo] = useState(props.todoList)
-      const [input, setInput] = useState("")
+    export default todoPage(props => {
+      const { initialNextId, initialTodoList } = props
+      const [nextId, setNextId] = useState(initialNextId)
+      const [todoList, setTodoList] = useState(initialTodoList)
+      const [hasDoneTodo, setHasDoneTodo] = useState(initialTodoList)
 
-      const addTodo = (e) => {
-        e.preventDefault()
-        if (e.target.todo.value) {
-          const updatedTodoList = [
-            ...todoList,
-            {
-              id: nextId + 1,
-              title: e.target.todo.value,
-              done: false
-            }
-          ]
-
-          setHasDoneTodo(checkDoneTodo(updatedTodoList))
-          setTodoList(updatedTodoList)
-          setNextId(nextId + 1)
-          e.target.todo.value = ""
-        }
-      }
-      const onInput = (e) => {
-        setInput(e.target.value)
-      }
       const toggle = (todo) => {
         todo.done = !todo.done
         setHasDoneTodo(checkDoneTodo())
@@ -101,12 +69,13 @@
       }
 
       return {
-        input,
-        onInput,
+        nextId,
+        setNextId,
         todoList,
+        setTodoList,
         hasDoneTodo,
+        setHasDoneTodo,
         deleteDoneTodos,
-        addTodo,
         toggle,
         checkDoneTodo,
         deleteTodo,
@@ -119,6 +88,16 @@
   </script>
 
   <style>
+  #container {
+    display: block;
+    max-width: 600px;
+    margin: 5% auto;
+    padding: 20px;
+    box-shadow:
+      0 2px 2px 0 rgba(0,0,0,.14),
+      0 3px 1px -2px rgba(0,0,0,.2),
+      0 1px 5px 0 rgba(0,0,0,.12);
+  }
   h4 {
     border-top: 1px solid #aaa;
     padding-top: 1rem;
