@@ -1,6 +1,6 @@
 import * as uhooks from 'uhooks'
 
-export const withHook = (setup) => {
+export const withHook = (setup, components) => {
   return {
     onBeforeMount() {
       this.isUpdated = false
@@ -11,6 +11,9 @@ export const withHook = (setup) => {
         }
       })()
       this.isUpdated = true
+    },
+    components: {
+      ...components,
     },
   }
 }
